@@ -1,36 +1,52 @@
 package com.stefanjiroveanu.controller;
 
-import org.apache.struts2.rest.DefaultHttpHeaders;
-import org.apache.struts2.rest.HttpHeaders;
-import com.opensymphony.xwork2.ModelDriven;
 import com.stefanjiroveanu.persistance.model.Student;
 import com.stefanjiroveanu.service.StudentService;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
-public class StudentController implements ModelDriven<Student> {
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-    private Student student;
-
-    private String uuid;
+@Path("/api")
+public class StudentController {
 
     @Inject
     private StudentService service;
 
-    public HttpHeaders show() {
-        student = service.findByUuid(uuid);
-        System.out.println("GET \t /user/{id}");
-        return new DefaultHttpHeaders("show");
+    @GET
+    @Path("/{uuid}")
+    @Produces(APPLICATION_JSON)
+    public Response findStudent(@PathParam("uuid") String uuid) {
+        return Response.ok(service.findByUuid(uuid)).build();
     }
 
-    public HttpHeaders create() {
-        student = service.save(student);
-        System.out.println("POST \t /user" + student.getUuid());
-        return new DefaultHttpHeaders("create");
+    @POST
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    public Response saveStudent(Student student) {
+        return Response.ok(service.save(student)).build();
     }
 
-    @Override
-    public Student getModel() {
-        return student;
+    @DELETE
+    @Path("/{uuid}")
+    public Response deleteStudent(@PathParam("uuid") String uuid) {
+        service.delete(uuid);
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{uuid}")
+    @Produces(APPLICATION_JSON)
+    public Response updateStudent(@PathParam("uuid") String uuid, Student student) {
+        return Response.ok(service.update(uuid, student)).build();
     }
 }

@@ -3,11 +3,14 @@ package com.stefanjiroveanu.service;
 import com.stefanjiroveanu.persistance.model.Student;
 import com.stefanjiroveanu.persistance.repository.StudentRepository;
 
+import javax.inject.Inject;
+
 public class StudentService {
 
+    @Inject
     private StudentRepository studentRepository;
 
-    public Student save(Student student){
+    public Student save(Student student) {
         return studentRepository.save(student);
     }
 
